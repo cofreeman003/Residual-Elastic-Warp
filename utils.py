@@ -11,7 +11,7 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
-import torchgeometry as tgm
+import kornia.geometry.transform as tgm
 
 from tensorboardX import SummaryWriter
 from torch.optim import SGD, Adam, AdamW
@@ -87,7 +87,7 @@ def get_warped_coords(four_point, scale=(4,4), size=(512,512)):
     four_point_org = four_point_org.flatten(2).permute(0, 2, 1)
     four_point_new = four_point_new.flatten(2).permute(0, 2, 1)
 
-    H = tgm.get_perspective_transform(four_point_org, four_point_new).cuda()
+    H = tgm.get_perspective_transform(four_point_org.contiguous(), four_point_new.contiguous()).cuda()
     H_inv = torch.inverse(H)
     new = warp_coord(four_point_org, H_inv.cuda().float())
 
